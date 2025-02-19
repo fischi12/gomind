@@ -177,7 +177,7 @@ func Test_generateHandCombinations(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := len(generateHandCombinations(tt.args.countCommunityCards)); !reflect.DeepEqual(got, tt.want) {
+				if got := len(GenerateHandCombinations(tt.args.countCommunityCards)); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("generateHandCombinations() = %v, want %v", got, tt.want)
 				}
 			},
