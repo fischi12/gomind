@@ -33,10 +33,10 @@ func enqueuTask() {
 	// Example 1: Enqueue task to be processed immediately.
 	//            Use (*Client).Enqueue method.
 	// ------------------------------------------------------
-	hands := services.GenerateHandCombinations(3)
+	hands := services.GenerateHandCombinations(4)
 	batches := batchSlice(hands, 100)
 	for _, batch := range batches {
-		task, err := tasks.NewHandAbstractionFlopTask(batch)
+		task, err := tasks.NewHandAbstractionTurnTask(batch)
 		if err != nil {
 			log.Fatalf("could not create task: %v", err)
 		}
@@ -53,7 +53,7 @@ func main() {
 	fmt.Println(runtime.NumCPU())
 
 	db := database.GetDB()
-	err := db.AutoMigrate(&models.FlopHand{})
+	err := db.AutoMigrate(&models.FlopHand{}, &models.TurnHand{})
 	if err != nil {
 		return
 	}

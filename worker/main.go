@@ -17,7 +17,7 @@ func main() {
 	srv := asynq.NewServer(
 		asynq.RedisClientOpt{Addr: redisAddr},
 		asynq.Config{
-			Concurrency: 10,
+			Concurrency: runtime.NumCPU() - 1,
 		},
 	)
 
@@ -25,6 +25,7 @@ func main() {
 
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(tasks.TypeHandAbstractionFlop, taskHandler.HandleHandAbstractionFlopTask)
+	mux.HandleFunc(tasks.TypeHandAbstractionTurn, taskHandler.HandleHandAbstractionTurnTask)
 
 	if err := srv.Run(mux); err != nil {
 		log.Fatalf("could not run server: %v", err)

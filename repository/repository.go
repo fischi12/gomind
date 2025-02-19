@@ -15,8 +15,23 @@ func UpsertFlopHand(db *gorm.DB, flopHand *[]models.FlopHand) error {
 }
 
 func FindAllFlopHand(db *gorm.DB) []models.FlopHand {
-	var contacts []models.FlopHand
+	var hands []models.FlopHand
 
-	db.Find(&contacts)
-	return contacts
+	db.Find(&hands)
+	return hands
+}
+
+func UpsertTurnHand(db *gorm.DB, turnHand *[]models.TurnHand) error {
+	return db.Clauses(
+		clause.OnConflict{
+			UpdateAll: true,
+		},
+	).CreateInBatches(turnHand, 100).Error
+}
+
+func FindAllTurnHand(db *gorm.DB) []models.TurnHand {
+	var hands []models.TurnHand
+
+	db.Find(&hands)
+	return hands
 }

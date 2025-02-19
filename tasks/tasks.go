@@ -12,6 +12,7 @@ import (
 
 const (
 	TypeHandAbstractionFlop = "hand_abstraction:flop"
+	TypeHandAbstractionTurn = "hand_abstraction:turn"
 )
 
 //----------------------------------------------
@@ -25,6 +26,14 @@ func NewHandAbstractionFlopTask(hand []services.Hand) (*asynq.Task, error) {
 		return nil, err
 	}
 	return asynq.NewTask(TypeHandAbstractionFlop, payload), nil
+}
+
+func NewHandAbstractionTurnTask(hand []services.Hand) (*asynq.Task, error) {
+	payload, err := json.Marshal(hand)
+	if err != nil {
+		return nil, err
+	}
+	return asynq.NewTask(TypeHandAbstractionTurn, payload), nil
 }
 
 // ---------------------------------------------------------------
@@ -50,5 +59,14 @@ func (h *TaskHandler) HandleHandAbstractionFlopTask(ctx context.Context, t *asyn
 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 	}
 
-	return services.CalculateAndSaveHandStrength(hand, h.DB)
+	return services.CalculateAndSaveHandStrengthFlop(hand, h.DB)
+}
+
+func (h *TaskHandler) HandleHandAbstractionTurnTask(ctx context.Context, t *asynq.Task) error {
+	var hand []services.Hand
+	if err := json.Unmarshal(t.Payload(), &hand); err != nil {
+		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
+	}
+
+	return services.CalculateAndSaveHandStrengthTurn(hand, h.DB)
 }
