@@ -195,19 +195,23 @@ func calculateHandStrength(holeCards []string, board []string) handStrength {
 	return result
 }
 
-func CalculateAndSaveHandStrength(hand Hand, db *gorm.DB) error {
-	strength := calculateHandStrength(hand.HoleCards, hand.CommunityCards)
-	flopHand := models.FlopHand{
-		Hand: strings.Join(hand.HoleCards, "") + strings.Join(
-			hand.CommunityCards,
-			"",
-		), HoleCards: strings.Join(hand.HoleCards, ""),
-		Board: strings.Join(
-			hand.HoleCards,
-			"",
-		),
-		Wins: strength.Wins,
-		Loss: strength.Loss, Draws: strength.Draws,
+func CalculateAndSaveHandStrength(batch []Hand, db *gorm.DB) error {
+	result := make([]models.FlopHand, len(batch))
+	for _, hand := range batch {
+		strength := calculateHandStrength(hand.HoleCards, hand.CommunityCards)
+		flopHand := models.FlopHand{
+			Hand: strings.Join(hand.HoleCards, "") + strings.Join(
+				hand.CommunityCards,
+				"",
+			), HoleCards: strings.Join(hand.HoleCards, ""),
+			Board: strings.Join(
+				hand.CommunityCards,
+				"",
+			),
+			Wins: strength.Wins,
+			Loss: strength.Loss, Draws: strength.Draws,
+		}
+		result = append(result, flopHand)
 	}
-	return repository.UpsertFlopHand(db, &flopHand)
+	return repository.UpsertFlopHand(db, &result)
 }

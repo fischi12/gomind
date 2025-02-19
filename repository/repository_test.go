@@ -22,13 +22,13 @@ func SetupTestDB() *gorm.DB {
 
 func Test_createFlopHand(t *testing.T) {
 	db := SetupTestDB()
-	hand := models.FlopHand{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}
+	hand := []models.FlopHand{{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}}
 	err := UpsertFlopHand(db, &hand)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
-	var expected models.FlopHand
+	var expected []models.FlopHand
 	db.Find(&expected)
 
 	if !reflect.DeepEqual(hand, expected) {
@@ -38,9 +38,14 @@ func Test_createFlopHand(t *testing.T) {
 
 func Test_upsertFlopHand(t *testing.T) {
 	db := SetupTestDB()
-	hand := models.FlopHand{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}
+	hand := []models.FlopHand{{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}}
 
-	duplicate := models.FlopHand{Hand: "Hand", HoleCards: "duplicate", Board: "duplicate", Wins: 2, Draws: 3, Loss: 4}
+	duplicate := []models.FlopHand{
+		{
+			Hand: "Hand", HoleCards: "duplicate", Board: "duplicate", Wins: 2, Draws: 3,
+			Loss: 4,
+		},
+	}
 	err := UpsertFlopHand(db, &hand)
 	if err != nil {
 		t.Fatalf("error: %v", err)
@@ -49,7 +54,7 @@ func Test_upsertFlopHand(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error duplicate: %v", err)
 	}
-	var expected models.FlopHand
+	var expected []models.FlopHand
 	db.Find(&expected)
 
 	if !reflect.DeepEqual(duplicate, expected) {
@@ -59,18 +64,20 @@ func Test_upsertFlopHand(t *testing.T) {
 
 func Test_findAllFlopHand(t *testing.T) {
 	db := SetupTestDB()
-	hand := models.FlopHand{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}
+	hand := []models.FlopHand{{Hand: "Hand", HoleCards: "HoleCards", Board: "Board", Wins: 1, Draws: 2, Loss: 3}}
 
-	handSecond := models.FlopHand{
-		Hand: "HandSecond", HoleCards: "duplicate", Board: "duplicate", Wins: 2, Draws: 3,
-		Loss: 4,
+	handSecond := []models.FlopHand{
+		{
+			Hand: "HandSecond", HoleCards: "duplicate", Board: "duplicate", Wins: 2, Draws: 3,
+			Loss: 4,
+		},
 	}
 	_ = UpsertFlopHand(db, &hand)
 	_ = UpsertFlopHand(db, &handSecond)
 
 	actual := FindAllFlopHand(db)
 
-	expected := []models.FlopHand{hand, handSecond}
+	expected := []models.FlopHand{hand[0], handSecond[0]}
 
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("%v, want %v", actual, expected)

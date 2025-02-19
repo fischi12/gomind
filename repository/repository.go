@@ -6,12 +6,12 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func UpsertFlopHand(db *gorm.DB, flopHand *models.FlopHand) error {
+func UpsertFlopHand(db *gorm.DB, flopHand *[]models.FlopHand) error {
 	return db.Clauses(
 		clause.OnConflict{
 			UpdateAll: true,
 		},
-	).Create(flopHand).Error
+	).CreateInBatches(flopHand, 100).Error
 }
 
 func FindAllFlopHand(db *gorm.DB) []models.FlopHand {

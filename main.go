@@ -11,7 +11,19 @@ import (
 	"runtime"
 )
 
-const redisAddr = "127.0.0.1:6379"
+func batchSlice(data []services.Hand, batchSize int) [][]services.Hand {
+	var batches [][]services.Hand
+	for i := 0; i < len(data); i += batchSize {
+		end := i + batchSize
+		if end > len(data) {
+			end = len(data) // Verhindert Out-of-Bounds-Fehler
+		}
+		batches = append(batches, data[i:end])
+	}
+	return batches
+}
+
+const redisAddr = "192.168.2.188:6379"
 
 func enqueuTask() {
 	client := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddr})
@@ -22,8 +34,9 @@ func enqueuTask() {
 	//            Use (*Client).Enqueue method.
 	// ------------------------------------------------------
 	hands := services.GenerateHandCombinations(3)
-	for _, hand := range hands {
-		task, err := tasks.NewHandAbstractionFlopTask(hand)
+	batches := batchSlice(hands, 100)
+	for _, batch := range batches {
+		task, err := tasks.NewHandAbstractionFlopTask(batch)
 		if err != nil {
 			log.Fatalf("could not create task: %v", err)
 		}

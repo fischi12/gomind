@@ -4,25 +4,15 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"sync"
 )
 
-var (
-	db   *gorm.DB
-	once sync.Once
-)
-
-// GetDB stellt sicher, dass nur eine DB-Verbindung existiert
 func GetDB() *gorm.DB {
-	once.Do(
-		func() {
-			dsn := "host=localhost user=postgres password=example  port=5555"
-			var err error
-			db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-			if err != nil {
-				log.Fatal("Fehler beim Öffnen der DB:", err)
-			}
-		},
-	)
+
+	dsn := "host=192.168.2.188 user=postgres password=example  port=5555"
+	var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Fehler beim Öffnen der DB:", err)
+	}
+
 	return db
 }

@@ -19,7 +19,7 @@ const (
 // A task consists of a type and a payload.
 //----------------------------------------------
 
-func NewHandAbstractionFlopTask(hand services.Hand) (*asynq.Task, error) {
+func NewHandAbstractionFlopTask(hand []services.Hand) (*asynq.Task, error) {
 	payload, err := json.Marshal(hand)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func NewTaskHandler() *TaskHandler {
 }
 
 func (h *TaskHandler) HandleHandAbstractionFlopTask(ctx context.Context, t *asynq.Task) error {
-	var hand services.Hand
+	var hand []services.Hand
 	if err := json.Unmarshal(t.Payload(), &hand); err != nil {
 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 	}

@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-const redisAddr = "127.0.0.1:6379"
+const redisAddr = "192.168.2.188:6379"
 
 func main() {
 	fmt.Println("Worker")
