@@ -196,7 +196,7 @@ func calculateHandStrength(holeCards []string, board []string) handStrength {
 }
 
 func CalculateAndSaveHandStrength(batch []Hand, db *gorm.DB) error {
-	result := make([]models.FlopHand, len(batch))
+	result := make([]models.FlopHand, 0)
 	for _, hand := range batch {
 		strength := calculateHandStrength(hand.HoleCards, hand.CommunityCards)
 		flopHand := models.FlopHand{
