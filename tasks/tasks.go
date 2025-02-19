@@ -14,18 +14,13 @@ const (
 	TypeHandAbstractionFlop = "hand_abstraction:flop"
 )
 
-type EmailDeliveryPayload struct {
-	UserID     int
-	TemplateID string
-}
-
 //----------------------------------------------
 // Write a function NewXXXTask to create a task.
 // A task consists of a type and a payload.
 //----------------------------------------------
 
-func NewEmailDeliveryTask(userID int, tmplID string) (*asynq.Task, error) {
-	payload, err := json.Marshal(EmailDeliveryPayload{UserID: userID, TemplateID: tmplID})
+func NewHandAbstractionFlopTask(hand services.Hand) (*asynq.Task, error) {
+	payload, err := json.Marshal(hand)
 	if err != nil {
 		return nil, err
 	}

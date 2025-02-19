@@ -92,7 +92,7 @@ func removeDuplicateCombinations(combinations [][]string) [][]string {
 	return result
 }
 
-func generateHandCombinations(countCommunityCards int) []Hand {
+func GenerateHandCombinations(countCommunityCards int) []Hand {
 	result := make([]Hand, 0)
 	var holeCards = generateAbstractedHoleCards()
 
