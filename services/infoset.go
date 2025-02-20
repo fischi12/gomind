@@ -1,12 +1,12 @@
 package services
 
 type InfoSet struct {
-	InfoSetKey         string             `gorm:"primaryKey"`
-	Actions            []string           `gorm:"column:actions;type:jsonb"`
-	Player             int                `gorm:"column:player"`
-	Strategy           map[string]float64 `gorm:"column:strategy;type:jsonb"`
-	Regret             map[string]float64 `gorm:"column:regret;type:jsonb"`
-	CumulativeStrategy map[string]float64 `gorm:"column:cumulative_strategy;type:jsonb"`
+	InfoSetKey         string
+	Actions            []string
+	Player             int
+	Strategy           map[string]float64
+	Regret             map[string]float64
+	CumulativeStrategy map[string]float64
 }
 
 func (infoSet *InfoSet) GetStrategy() {

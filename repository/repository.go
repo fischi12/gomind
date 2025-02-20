@@ -35,3 +35,20 @@ func FindAllTurnHand(db *gorm.DB) []models.TurnHand {
 	db.Find(&hands)
 	return hands
 }
+
+//
+//func UpsertInfoSetPreFlop(db *gorm.DB, infoSet *[]models.InfoSetPreFlop) error {
+//	return db.Clauses(
+//		clause.OnConflict{
+//			UpdateAll: true,
+//		},
+//	).CreateInBatches(infoSet, 100).Error
+//}
+//
+//func UpsertInfoSetPostFlop(db *gorm.DB, infoSet *[]models.InfoSetPostFlop) error {
+//	return db.Clauses(
+//		clause.OnConflict{
+//			UpdateAll: true,
+//		},
+//	).CreateInBatches(infoSet, 100).Error
+//}

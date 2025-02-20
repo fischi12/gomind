@@ -179,8 +179,11 @@ func (history PreFlopHistory) getInfoSet() InfoSet {
 
 func (history PreFlopHistory) newHistory(newHistory []string) history {
 	return PreFlopHistory{
-		history: newHistory, winner: history.winner, playerHand: history.playerHand,
-		opponentHand: history.opponentHand, board: history.board,
+		history:      newHistory,
+		winner:       history.winner,
+		playerHand:   history.playerHand,
+		opponentHand: history.opponentHand,
+		board:        history.board,
 	}
 }
 

@@ -1,24 +1,152 @@
 package services
 
-import "fmt"
+import (
+	"github.com/mattlangl/gophe"
+	"github.com/schollz/progressbar/v3"
+	"math/rand"
+	"strconv"
+	"strings"
+)
 
-func runPreflopIteration(history PreFlopHistory) {
-	cfr := vanillaCfr(history, 0, 1, 1)
+func runIteration(history history) {
+	vanillaCfr(history, 0, 1, 1)
 	vanillaCfr(history, 1, 1, 1)
-	strategy := InfoSetsPreFlop["14"].Strategy["f"]
-	regret := InfoSetsPreFlop["14"].Regret["f"]
-	cumulativeStrategy := InfoSetsPreFlop["14"].CumulativeStrategy["f"]
-	fmt.Println(cfr)
-	fmt.Println(strategy)
-	fmt.Println(regret)
-	fmt.Println(cumulativeStrategy)
-	//Double strategyFold = infoSets.get("14").getStrategy().get(Action.FOLD);
-	//Double regretFold = infoSets.get("14").getRegret().get(Action.FOLD);
-	//Double cumulativeStrategyFold = infoSets.get("14").getCumulativeStrategy().get(Action.FOLD);
-	//assertEquals(0.9912767045168166, strategyFold, 0.00001);
-	//assertEquals(49.52140287769784, regretFold, 0.00001);
-	//assertEquals(0.2, cumulativeStrategyFold, 0.00001);
-	//
-	//assertEquals(22.093750000000004, acctualPlayer, 0.00001);
-	//assertEquals(-51.02140287769784, acctualOpponent, .00001);
+}
+
+func runPostFlopIteration() {
+	flopHistory := generatePostFlopHistory()
+	runIteration(flopHistory)
+}
+
+func runPreFlopIteration() {
+	flopHistory := generatePreFlopHistory()
+	runIteration(flopHistory)
+}
+
+func trainPreFlopIteration() {
+	iterations := 1000000
+	bar := progressbar.New(iterations)
+	for range iterations {
+		bar.Add(1)
+		runPreFlopIteration()
+	}
+
+}
+
+func trainPostFlopIteration() {
+	iterations := 1000000
+	bar := progressbar.New(iterations)
+	for range iterations {
+		bar.Add(1)
+		runPostFlopIteration()
+	}
+
+}
+
+func generatePreFlopHistory() PreFlopHistory {
+	deck := initializeDeck()
+
+	rand.Shuffle(
+		len(deck), func(i, j int) {
+			deck[i], deck[j] = deck[j], deck[i]
+		},
+	)
+
+	playerHand := gophe.NewHand(
+		gophe.NewCard(deck[0]),
+		gophe.NewCard(deck[1]),
+		gophe.NewCard(deck[4]),
+		gophe.NewCard(deck[5]),
+		gophe.NewCard(deck[6]),
+		gophe.NewCard(deck[7]),
+		gophe.NewCard(deck[8]),
+	)
+	opponentHand := gophe.NewHand(
+		gophe.NewCard(deck[2]),
+		gophe.NewCard(deck[3]),
+		gophe.NewCard(deck[4]),
+		gophe.NewCard(deck[5]),
+		gophe.NewCard(deck[6]),
+		gophe.NewCard(deck[7]),
+		gophe.NewCard(deck[8]),
+	)
+
+	playerRank := gophe.EvaluateHand(*playerHand).GetValue()
+	opponentRank := gophe.EvaluateHand(*opponentHand).GetValue()
+
+	winner := "1"
+
+	if playerRank == opponentRank {
+		winner = "0"
+	}
+
+	if opponentRank < playerRank {
+		winner = "-1"
+	}
+
+	return PreFlopHistory{
+		history:      []string{},
+		playerHand:   strings.Join(deck[:2], ""),
+		opponentHand: strings.Join(deck[2:4], ""),
+		board:        strings.Join(deck[4:9], ""),
+		winner:       winner,
+	}
+
+}
+
+func generatePostFlopHistory() PostFlopHistory {
+	deck := initializeDeck()
+
+	rand.Shuffle(
+		len(deck), func(i, j int) {
+			deck[i], deck[j] = deck[j], deck[i]
+		},
+	)
+
+	playerHand := gophe.NewHand(
+		gophe.NewCard(deck[0]),
+		gophe.NewCard(deck[1]),
+		gophe.NewCard(deck[4]),
+		gophe.NewCard(deck[5]),
+		gophe.NewCard(deck[6]),
+		gophe.NewCard(deck[7]),
+		gophe.NewCard(deck[8]),
+	)
+	opponentHand := gophe.NewHand(
+		gophe.NewCard(deck[2]),
+		gophe.NewCard(deck[3]),
+		gophe.NewCard(deck[4]),
+		gophe.NewCard(deck[5]),
+		gophe.NewCard(deck[6]),
+		gophe.NewCard(deck[7]),
+		gophe.NewCard(deck[8]),
+	)
+
+	playerRank := gophe.EvaluateHand(*playerHand).GetValue()
+	opponentRank := gophe.EvaluateHand(*opponentHand).GetValue()
+
+	winner := "1"
+
+	if playerRank == opponentRank {
+		winner = "0"
+	}
+
+	if opponentRank < playerRank {
+		winner = "-1"
+	}
+
+	return PostFlopHistory{
+		history:              []string{},
+		playerHand:           strings.Join(deck[:2], ""),
+		opponentHand:         strings.Join(deck[2:4], ""),
+		board:                strings.Join(deck[4:9], ""),
+		winner:               winner,
+		playerFlopCluster:    strconv.Itoa(rand.Intn(10) + 1),
+		opponentFlopCluster:  strconv.Itoa(rand.Intn(10) + 1),
+		playerTurnCluster:    strconv.Itoa(rand.Intn(10) + 1),
+		opponentTurnCluster:  strconv.Itoa(rand.Intn(10) + 1),
+		playerRiverCluster:   strconv.Itoa(rand.Intn(10) + 1),
+		opponentRiverCluster: strconv.Itoa(rand.Intn(10) + 1),
+	}
+
 }
