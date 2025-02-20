@@ -227,3 +227,25 @@ func Test_abstractHand(t *testing.T) {
 		)
 	}
 }
+
+func Test_getPreFlopClusterId(t *testing.T) {
+	type args struct {
+		cards string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{name: "abstract holecard", args: args{cards: "AhTs"}, want: 22},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := getPreFlopClusterId(tt.args.cards); got != tt.want {
+					t.Errorf("getPreFlopClusterId() = %v, want %v", got, tt.want)
+				}
+			},
+		)
+	}
+}

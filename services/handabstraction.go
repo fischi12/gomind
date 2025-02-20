@@ -236,3 +236,53 @@ func CalculateAndSaveHandStrengthTurn(batch []Hand, db *gorm.DB) error {
 	}
 	return repository.UpsertTurnHand(db, &result)
 }
+
+var KEY = map[string]int{
+	"A":  1,
+	"2":  2,
+	"3":  3,
+	"4":  4,
+	"5":  5,
+	"6":  6,
+	"7":  7,
+	"8":  8,
+	"9":  9,
+	"T":  10,
+	"10": 10,
+	"J":  11,
+	"Q":  12,
+	"K":  13,
+}
+
+func sum(b int) int {
+	if b <= 1 {
+		return 0
+	}
+	n := b - 1
+	a := 12
+	l := 12 - (b - 2)
+	return n * (a + l) / 2
+}
+
+func hash(a string, b string) int {
+
+	first := min(KEY[a], KEY[b])
+	second := max(KEY[a], KEY[b])
+	ans := sum(first) + (second - first)
+	return ans
+}
+
+func getPreFlopClusterId(cards string) int {
+	if len(cards) != 4 {
+		panic("cardstring must be length 4")
+	}
+	clusterId := 0
+	if cards[0] == cards[2] {
+		clusterId = KEY[string(cards[0])]
+	} else if cards[1] != cards[3] {
+		clusterId = 13 + hash(string(cards[0]), string(cards[2]))
+	} else {
+		clusterId = 91 + hash(string(cards[0]), string(cards[2]))
+	}
+	return clusterId
+}
